@@ -26,7 +26,7 @@ class PackageMetadataTests(unittest.TestCase):
             metadata["project"]["classifiers"],
         )
         self.assertEqual(metadata["tool"]["comfy"]["DisplayName"], "LlamaServe-Doc")
-        self.assertEqual(metadata["tool"]["comfy"]["PublisherId"], "DocWorkBox")
+        self.assertEqual(metadata["tool"]["comfy"]["PublisherId"], "zhaoke1006")
         self.assertNotIn("Icon", metadata["tool"]["comfy"])
 
     def test_registry_archive_excludes_development_only_files(self):

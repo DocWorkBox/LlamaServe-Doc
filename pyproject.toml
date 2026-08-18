@@ -18,6 +18,6 @@ Documentation = "https://github.com/DocWorkBox/LlamaServe-Doc#readme"
 "Bug Tracker" = "https://github.com/DocWorkBox/LlamaServe-Doc/issues"
 
 [tool.comfy]
-PublisherId = "DocWorkBox"
+PublisherId = "zhaoke1006"
 DisplayName = "LlamaServe-Doc"
 requires-comfyui = ">=0.32.0"

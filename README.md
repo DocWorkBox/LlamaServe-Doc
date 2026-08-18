@@ -59,7 +59,7 @@ python -m unittest discover -s tests -v
 
 首次注册前：
 
-1. 在 [Comfy Registry](https://registry.comfy.org/) 创建 Publisher，Publisher ID 使用 `DocWorkBox`。Publisher ID 创建后不可更改。
+1. 在 [Comfy Registry](https://registry.comfy.org/) 使用 Publisher ID `zhaoke1006`。Publisher ID 创建后不可更改。
 2. 为该 Publisher 创建 Registry API Key。
 3. 在 GitHub 仓库的 `Settings → Secrets and variables → Actions` 中新增仓库 Secret：`REGISTRY_ACCESS_TOKEN`。
 4. 打开 GitHub `Actions → Publish to Comfy Registry → Run workflow`，手动发布 `1.0.0`。
