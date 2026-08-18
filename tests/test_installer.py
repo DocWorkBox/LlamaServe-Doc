@@ -40,10 +40,11 @@ class BackendInstallerTests(unittest.TestCase):
                 ],
             }
             downloads = []
+            sources = {base.as_uri(): base, cudart.as_uri(): cudart}
 
             def downloader(url, destination, progress=None):
                 downloads.append(url)
-                destination.write_bytes(Path(url.removeprefix("file:///")).read_bytes())
+                destination.write_bytes(sources[url].read_bytes())
 
             installer = BackendInstaller(
                 root / "runtime",
