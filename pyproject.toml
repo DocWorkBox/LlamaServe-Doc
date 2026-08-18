@@ -1,16 +1,23 @@
 [project]
 name = "LlamaServe-Doc"
-version = "0.1.0"
+version = "1.0.0"
 description = "Managed native llama-server nodes for ComfyUI"
 requires-python = ">=3.10"
-license = "MIT"
+license = { file = "LICENSE" }
 readme = "README.md"
 authors = [{ name = "DocWorkBox" }]
+dependencies = []
+classifiers = [
+    "Operating System :: Microsoft :: Windows",
+    "Environment :: GPU :: NVIDIA CUDA",
+]
 
 [project.urls]
 Repository = "https://github.com/DocWorkBox/LlamaServe-Doc"
+Documentation = "https://github.com/DocWorkBox/LlamaServe-Doc#readme"
+"Bug Tracker" = "https://github.com/DocWorkBox/LlamaServe-Doc/issues"
 
 [tool.comfy]
 PublisherId = "DocWorkBox"
 DisplayName = "LlamaServe-Doc"
-Icon = ""
+requires-comfyui = ">=0.32.0"

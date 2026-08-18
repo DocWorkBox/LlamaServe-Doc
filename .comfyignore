@@ -1,0 +1,7 @@
+# Development-only files excluded from the Comfy Registry archive.
+.github/
+tests/
+__pycache__/
+*.py[cod]
+logs/
+runtime/
