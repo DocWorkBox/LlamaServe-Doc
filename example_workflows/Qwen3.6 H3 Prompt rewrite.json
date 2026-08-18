@@ -1,0 +1,170 @@
+{
+  "id": "0f521c01-2678-4ade-aa82-12e1f4b488c2",
+  "revision": 0,
+  "last_node_id": 5,
+  "last_link_id": 4,
+  "nodes": [
+    {
+      "id": 4,
+      "type": "LlamaServeDocLoader",
+      "pos": [
+        1984.289674834462,
+        -774.9570127981503
+      ],
+      "size": [
+        270,
+        226
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "server_config",
+          "type": "LLAMA_SERVER_CONFIG",
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LlamaServeDocLoader"
+      },
+      "widgets_values": [
+        "Qwen3.6-27B-H3-Prompt-Rewriter-Q4_K_M.gguf",
+        "None",
+        4096,
+        47,
+        "on",
+        "q8_0",
+        "q8_0",
+        8191
+      ]
+    },
+    {
+      "id": 3,
+      "type": "easy showAnything",
+      "pos": [
+        2761.387257829398,
+        -793.8592033586239
+      ],
+      "size": [
+        460.05864212661936,
+        405.1814531173876
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "integrated_multimodal_description: [Shot 1] Cinematic, medium shot from a slightly elevated angle, the camera pushes in slowly on a fluffy orange tabby kitten standing at the edge of a mossy stone pond bank. The setting is a tranquil, shaded forest clearing dappled with soft, warm sunlight filtering through a dense green canopy overhead. The kitten, featuring bright yellow eyes and a small white patch on its chest, crouches low against the damp, slippery green moss. Its tail twitches rhythmically back and forth as it intensely stares down into the crystal-clear water. Small ripples radiate across the surface of the pond, gently disturbing the reflection of the surrounding ferns. [Shot 2] At 00:04.200, the camera cuts to a close-up, water-level angle, holding a static shot just above the surface of the pond. The front paws of the orange tabby kitten from Shot 1 press firmly into the wet moss at the top edge of the frame. Below, a small, silvery fish darts playfully near a submerged, algae-covered twig in the shallow water. The kitten's right paw slowly and deliberately breaks the water's surface, pressing down to scoop at the exact spot where the fish swam. The fish instantly darts away to the right with a rapid flick of its tail. The kitten abruptly retracts its paw, shaking its damp fur, and its ears pin back slightly in a brief reaction of missed timing.\noverall_soundscape: A tranquil outdoor ambience establishes the scene, featuring the continuous, soft rustling of leaves in a gentle breeze and distant, sparse bird chirps. A distinct, rhythmic swish of fur brushing against moss is audible in the foreground as the kitten shifts its weight. This is followed by a pronounced, crisp splash and the light bubbling of displaced water as the paw strikes the pond's surface. The soundscape concludes with a rapid, high-pitched swish of water from the fleeing fish, accompanied by a subtle, damp shaking sound as the kitten pulls its paw back into the air.\nnon_diegetic_music: A solo acoustic guitar plays in a staccato, pizzicato style at a moderate tempo, accented by sparse, light glockenspiel notes. The instrumentation remains entirely acoustic, maintaining a steady, sparse rhythmic structure without any sudden dynamic swells or a sustained low-end bass track."
+      ]
+    },
+    {
+      "id": 5,
+      "type": "LlamaServeDocGenerate",
+      "pos": [
+        2331.336649517737,
+        -791.6821372805904
+      ],
+      "size": [
+        400,
+        402
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "server_config",
+          "type": "LLAMA_SERVER_CONFIG",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "links": [
+            4
+          ]
+        },
+        {
+          "name": "performance_json",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LlamaServeDocGenerate"
+      },
+      "widgets_values": [
+        "小猫捉鱼",
+        "You are a professional prompt rewriter for joint audio-video generation.\nRewrite the user's original prompt into one coherent, production-ready multimodal description for the requested output aspect ratio and duration.\n\nReturn only these three fields, in this exact order:\nintegrated_multimodal_description: ...\noverall_soundscape: ...\nnon_diegetic_music: ...\n\nRequirements:\n- Expand the visual narrative into clearly numbered shots such as [Shot 1], [Shot 2], and include timestamps for cuts after the first shot when useful.\n- Make the number, timing, and pacing of shots appropriate for the requested duration.\n- Compose the scene for the requested aspect ratio.\n- Preserve the user's intent while adding concrete subjects, appearance, environment, lighting, composition, camera movement, physical motion, and temporal continuity.\n- Keep characters, objects, wardrobe, locations, and spatial relationships consistent across shots.\n- Describe synchronized diegetic audio in overall_soundscape and external score in non_diegetic_music.\n- Do not add explanations, Markdown fences, safety commentary, or fields other than the three requested fields.\n",
+        1024,
+        0.8,
+        30,
+        0.9,
+        0.05,
+        1.05,
+        916217087466776,
+        "randomize",
+        "off",
+        false
+      ]
+    }
+  ],
+  "links": [
+    [
+      3,
+      4,
+      0,
+      5,
+      0,
+      "LLAMA_SERVER_CONFIG"
+    ],
+    [
+      4,
+      5,
+      0,
+      3,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.876922695000009,
+      "offset": [
+        -1850.9269732557805,
+        1120.6004280333632
+      ]
+    },
+    "frontendVersion": "1.48.7",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

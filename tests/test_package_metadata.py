@@ -1,3 +1,4 @@
+import json
 import sys
 import tomllib
 import unittest
@@ -40,6 +41,15 @@ class PackageMetadataTests(unittest.TestCase):
         self.assertIn("workflow_dispatch:", workflow)
         self.assertIn("Comfy-Org/publish-node-action@main", workflow)
         self.assertIn("secrets.REGISTRY_ACCESS_TOKEN", workflow)
+
+    def test_default_example_workflow_uses_registered_nodes(self):
+        workflow_path = ROOT / "example_workflows" / "Qwen3.6 H3 Prompt rewrite.json"
+        workflow = json.loads(workflow_path.read_text("utf-8"))
+        node_types = {node["type"] for node in workflow["nodes"]}
+
+        self.assertIn("LlamaServeDocLoader", node_types)
+        self.assertIn("LlamaServeDocGenerate", node_types)
+        self.assertEqual(workflow["version"], 0.4)
 
 
 if __name__ == "__main__":

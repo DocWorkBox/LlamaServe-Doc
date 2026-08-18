@@ -11,6 +11,12 @@ git clone https://github.com/DocWorkBox/LlamaServe-Doc.git
 
 重启 ComfyUI 后，在 `LlamaServe-Doc` 分类中添加节点。
 
+## 默认演示工作流
+
+仓库自带 `example_workflows/Qwen3.6 H3 Prompt rewrite.json`。安装并重启 ComfyUI 后，可以在 `Workflow → Browse Templates → LlamaServe-Doc` 中直接加载。
+
+该演示默认选择 `Qwen3.6-27B-H3-Prompt-Rewriter-Q4_K_M.gguf`，请把同名模型放入 `ComfyUI/models/LLM/`。工作流中的 `easy showAnything` 仅用于展示生成文本，需要安装 ComfyUI-Easy-Use；不安装时也可以删除这个显示节点，Loader 和 Generate 的推理不受影响。
+
 ## 节点
 
 - **LlamaServe-Doc Loader**：选择 `models/LLM` 中的 GGUF，设置上下文、GPU 层数、Flash Attention、KV Cache 和端口。
