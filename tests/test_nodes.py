@@ -9,7 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-folder_paths = types.ModuleType("folder_paths")
+folder_paths = sys.modules.setdefault("folder_paths", types.ModuleType("folder_paths"))
+folder_paths.base_path = str(ROOT)
 folder_paths.models_dir = "C:/models"
 folder_paths.folder_names_and_paths = {}
 folder_paths.get_filename_list = lambda category: [
@@ -18,7 +19,6 @@ folder_paths.get_filename_list = lambda category: [
     "legacy/model.safetensors",
 ]
 folder_paths.get_full_path = lambda category, name: f"C:/models/LLM/{name}"
-sys.modules.setdefault("folder_paths", folder_paths)
 
 comfy = types.ModuleType("comfy")
 model_management = types.ModuleType("comfy.model_management")
@@ -88,7 +88,7 @@ class NodeTests(unittest.TestCase):
         )[0]
         self.assertEqual(
             config.media_root,
-            Path(folder_paths.models_dir).parent.resolve(),
+            Path(folder_paths.base_path).resolve(),
         )
 
     def test_loader_hides_and_automatically_configures_server_port(self):
