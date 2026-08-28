@@ -1,0 +1,475 @@
+{
+  "id": "74f37f8e-5290-4d90-bbdf-h3-omni-combined",
+  "revision": 0,
+  "last_node_id": 7,
+  "last_link_id": 7,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LlamaServeDocLoader",
+      "pos": [
+        80,
+        80
+      ],
+      "size": [
+        360,
+        300
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "server_config",
+          "type": "LLAMA_SERVER_CONFIG",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LlamaServeDocLoader"
+      },
+      "widgets_values": [
+        "Qwen2.5-Omni-7B-H3-Prompt-Rewriter-Q4_K_M.gguf",
+        "mmproj-Qwen2.5-Omni-7B-F16.gguf",
+        32768,
+        -1,
+        "on",
+        "q8_0",
+        "q8_0"
+      ],
+      "widgets_values_named": {
+        "model": "Qwen2.5-Omni-7B-H3-Prompt-Rewriter-Q4_K_M.gguf",
+        "mmproj": "mmproj-Qwen2.5-Omni-7B-F16.gguf",
+        "context_length": 32768,
+        "gpu_layers": -1,
+        "flash_attention": "on",
+        "cache_type_k": "q8_0",
+        "cache_type_v": "q8_0"
+      }
+    },
+    {
+      "id": 5,
+      "type": "PreviewAny",
+      "pos": [
+        1205.5882352941178,
+        81.76474178538604
+      ],
+      "size": [
+        513.5294117647059,
+        754.9412123736213
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {}
+    },
+    {
+      "id": 4,
+      "type": "VHS_LoadVideo",
+      "pos": [
+        -863.3757216509645,
+        132.74511000689347
+      ],
+      "size": [
+        261.6533203125,
+        452.8151996707128
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "meta_batch",
+          "shape": 7,
+          "type": "VHS_BatchManager",
+          "link": null
+        },
+        {
+          "name": "vae",
+          "shape": 7,
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            3
+          ]
+        },
+        {
+          "name": "frame_count",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            4
+          ]
+        },
+        {
+          "name": "video_info",
+          "type": "VHS_VIDEOINFO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_LoadVideo"
+      },
+      "widgets_values": {
+        "video": "测试.mp4",
+        "force_rate": 0,
+        "custom_width": 0,
+        "custom_height": 0,
+        "frame_load_cap": 0,
+        "skip_first_frames": 0,
+        "select_every_nth": 1,
+        "format": "AnimateDiff",
+        "choose video to upload": "image",
+        "videopreview": {
+          "hidden": false,
+          "paused": false,
+          "params": {
+            "filename": "测试.mp4",
+            "type": "input",
+            "format": "video/mp4",
+            "force_rate": 0,
+            "custom_width": 0,
+            "custom_height": 0,
+            "frame_load_cap": 0,
+            "skip_first_frames": 0,
+            "select_every_nth": 1
+          }
+        }
+      },
+      "widgets_values_named": {
+        "video": "测试.mp4",
+        "force_rate": 0,
+        "custom_width": 0,
+        "custom_height": 0,
+        "frame_load_cap": 0,
+        "skip_first_frames": 0,
+        "select_every_nth": 1,
+        "format": "AnimateDiff",
+        "choose video to upload": "image",
+        "videopreview": {
+          "hidden": false,
+          "paused": false,
+          "params": {
+            "filename": "测试.mp4",
+            "type": "input",
+            "format": "video/mp4",
+            "force_rate": 0,
+            "custom_width": 0,
+            "custom_height": 0,
+            "frame_load_cap": 0,
+            "skip_first_frames": 0,
+            "select_every_nth": 1
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [
+        -580.3921329273896,
+        136.4705882352941
+      ],
+      "size": [
+        330,
+        314
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            2
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "Krea2_turbo_00053_.png",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "Krea2_turbo_00053_.png",
+        "upload": "image"
+      }
+    },
+    {
+      "id": 3,
+      "type": "LlamaServeDocH3OmniGenerate",
+      "pos": [
+        520,
+        80
+      ],
+      "size": [
+        650,
+        560
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "server_config",
+          "type": "LLAMA_SERVER_CONFIG",
+          "link": 1
+        },
+        {
+          "label": "ref_image_0",
+          "name": "ref_images.ref_image_0",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 2
+        },
+        {
+          "label": "ref_image_1",
+          "name": "ref_images.ref_image_1",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "label": "ref_video_0",
+          "name": "ref_videos.ref_video_0",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 3
+        },
+        {
+          "label": "ref_video_1",
+          "name": "ref_videos.ref_video_1",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "label": "ref_video_audio_0",
+          "name": "ref_video_audios.ref_video_audio_0",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 4
+        },
+        {
+          "label": "ref_video_audio_1",
+          "name": "ref_video_audios.ref_video_audio_1",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "label": "ref_audio_0",
+          "name": "ref_audios.ref_audio_0",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 7
+        },
+        {
+          "label": "ref_audio_1",
+          "name": "ref_audios.ref_audio_1",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "links": [
+            5
+          ]
+        },
+        {
+          "name": "performance_json",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "groups",
+          "type": "MMX_DIR_GROUP",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LlamaServeDocH3OmniGenerate"
+      },
+      "widgets_values": [
+        "Ref2AV",
+        "<Video 1> 的人物替换为<Picture 1> 的人物",
+        8,
+        "16:9",
+        2048,
+        0.2,
+        20,
+        0.9,
+        0.05,
+        1.05,
+        0,
+        "fixed",
+        "off",
+        true
+      ],
+      "widgets_values_named": {
+        "mode": "Ref2AV",
+        "raw_prompt": "<Video 1> 的人物替换为<Picture 1> 的人物",
+        "duration": 8,
+        "resolution": "16:9",
+        "max_tokens": 2048,
+        "temperature": 0.2,
+        "top_k": 20,
+        "top_p": 0.9,
+        "min_p": 0.05,
+        "repeat_penalty": 1.05,
+        "seed": 0,
+        "control_after_generate": "fixed",
+        "reasoning": "off",
+        "stop_server_after_generate": true
+      }
+    },
+    {
+      "id": 7,
+      "type": "LoadAudio",
+      "pos": [
+        -228.33327349494448,
+        145.29411764705884
+      ],
+      "size": [
+        270,
+        136
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "01_single_urban_woman_dance_22s.mp4",
+        null,
+        ""
+      ],
+      "widgets_values_named": {
+        "audio": "01_single_urban_woman_dance_22s.mp4",
+        "upload": ""
+      }
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      3,
+      0,
+      "LLAMA_SERVER_CONFIG"
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      1,
+      "IMAGE"
+    ],
+    [
+      3,
+      4,
+      0,
+      3,
+      3,
+      "IMAGE"
+    ],
+    [
+      4,
+      4,
+      2,
+      3,
+      5,
+      "AUDIO"
+    ],
+    [
+      5,
+      3,
+      0,
+      5,
+      0,
+      "STRING"
+    ],
+    [
+      7,
+      7,
+      0,
+      3,
+      7,
+      "AUDIO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7727272727272729,
+      "offset": [
+        948.2647132253041,
+        376.0141469882225
+      ]
+    },
+    "frontendVersion": "1.49.6",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

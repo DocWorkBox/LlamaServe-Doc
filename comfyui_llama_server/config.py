@@ -14,7 +14,8 @@ class ServerConfig:
     cache_type_k: str
     cache_type_v: str
     host: str = "127.0.0.1"
-    port: int = 8191
+    port: int = 0
+    media_root: Path | None = None
 
     def build_command(self, executable: Path) -> list[str]:
         gpu_layers = "auto" if self.gpu_layers == -1 else str(self.gpu_layers)
@@ -45,6 +46,8 @@ class ServerConfig:
         ]
         if self.mmproj_path is not None:
             command.extend(["--mmproj", self.mmproj_path.as_posix()])
+        if self.media_root is not None:
+            command.extend(["--media-path", self.media_root.as_posix()])
         return command
 
     def signature(self) -> tuple[object, ...]:
@@ -58,4 +61,5 @@ class ServerConfig:
             self.cache_type_v,
             self.host,
             self.port,
+            self.media_root.resolve() if self.media_root else None,
         )

@@ -13,7 +13,9 @@ class GenerationService:
         stop_after_generate: bool,
         interrupt_check=None,
         on_text=None,
+        idle_timeout_seconds: float = 0,
     ):
+        self.manager.cancel_idle_stop()
         base_url = self.manager.ensure_started(config, interrupt_check=interrupt_check)
         try:
             return self.client.generate(
@@ -25,3 +27,5 @@ class GenerationService:
         finally:
             if stop_after_generate:
                 self.manager.stop()
+            else:
+                self.manager.schedule_idle_stop(idle_timeout_seconds)

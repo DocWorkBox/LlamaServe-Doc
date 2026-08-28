@@ -1,5 +1,6 @@
 import sys
 import unittest
+from dataclasses import fields
 from pathlib import Path
 
 
@@ -10,6 +11,9 @@ from comfyui_llama_server.config import ServerConfig
 
 
 class ServerConfigTests(unittest.TestCase):
+    def test_config_supports_restricted_local_media_root(self):
+        self.assertIn("media_root", {field.name for field in fields(ServerConfig)})
+
     def test_build_command_uses_exact_gpu_layers_and_omits_mmproj(self):
         config = ServerConfig(
             model_path=Path("C:/models/model.gguf"),
@@ -42,12 +46,15 @@ class ServerConfigTests(unittest.TestCase):
             cache_type_k="q8_0",
             cache_type_v="q8_0",
             port=8191,
+            media_root=Path("C:/ComfyUI"),
         )
 
         command = config.build_command(Path("C:/runtime/llama-server.exe"))
 
         self.assertEqual(command[command.index("--gpu-layers") + 1], "auto")
         self.assertEqual(command[command.index("--mmproj") + 1], "C:/models/mmproj.gguf")
+        self.assertIn("--media-path", command)
+        self.assertEqual(command[command.index("--media-path") + 1], "C:/ComfyUI")
 
     def test_signature_changes_when_server_settings_change(self):
         base = ServerConfig(Path("C:/models/model.gguf"), None, 4096, 47, "on", "f16", "f16", port=8191)

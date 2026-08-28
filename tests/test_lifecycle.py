@@ -13,6 +13,8 @@ class FakeManager:
     def __init__(self):
         self.started = 0
         self.stopped = 0
+        self.cancelled_idle_stops = 0
+        self.scheduled_idle_stops = []
 
     def ensure_started(self, config, interrupt_check=None):
         self.started += 1
@@ -21,6 +23,12 @@ class FakeManager:
 
     def stop(self):
         self.stopped += 1
+
+    def cancel_idle_stop(self):
+        self.cancelled_idle_stops += 1
+
+    def schedule_idle_stop(self, timeout_seconds):
+        self.scheduled_idle_stops.append(timeout_seconds)
 
 
 class FakeClient:
@@ -44,6 +52,34 @@ class GenerationServiceTests(unittest.TestCase):
         self.assertEqual(manager.started, 1)
         self.assertEqual(manager.stopped, 0)
 
+    def test_schedules_idle_stop_after_success_when_server_is_kept(self):
+        manager = FakeManager()
+        service = GenerationService(manager, FakeClient())
+
+        service.generate(
+            "config",
+            {"messages": []},
+            stop_after_generate=False,
+            idle_timeout_seconds=300,
+        )
+
+        self.assertEqual(manager.cancelled_idle_stops, 1)
+        self.assertEqual(manager.scheduled_idle_stops, [300])
+
+    def test_schedules_idle_stop_after_error_when_server_is_kept(self):
+        manager = FakeManager()
+        service = GenerationService(manager, FakeClient(RuntimeError("boom")))
+
+        with self.assertRaisesRegex(RuntimeError, "boom"):
+            service.generate(
+                "config",
+                {"messages": []},
+                stop_after_generate=False,
+                idle_timeout_seconds=300,
+            )
+
+        self.assertEqual(manager.scheduled_idle_stops, [300])
+
     def test_stops_owned_server_after_success_when_enabled(self):
         manager = FakeManager()
         service = GenerationService(manager, FakeClient())
@@ -51,6 +87,7 @@ class GenerationServiceTests(unittest.TestCase):
         service.generate("config", {"messages": []}, stop_after_generate=True)
 
         self.assertEqual(manager.stopped, 1)
+        self.assertEqual(manager.scheduled_idle_stops, [])
 
     def test_stops_owned_server_after_error_when_enabled(self):
         manager = FakeManager()

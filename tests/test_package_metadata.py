@@ -14,7 +14,7 @@ class PackageMetadataTests(unittest.TestCase):
         metadata = tomllib.loads((ROOT / "pyproject.toml").read_text("utf-8"))
 
         self.assertEqual(metadata["project"]["name"], "LlamaServe-Doc")
-        self.assertEqual(metadata["project"]["version"], "1.0.0")
+        self.assertEqual(metadata["project"]["version"], "1.3.0")
         self.assertEqual(metadata["project"]["license"], {"file": "LICENSE"})
         self.assertEqual(metadata["project"]["dependencies"], [])
         self.assertIn(
@@ -50,6 +50,48 @@ class PackageMetadataTests(unittest.TestCase):
         self.assertIn("LlamaServeDocLoader", node_types)
         self.assertIn("LlamaServeDocGenerate", node_types)
         self.assertEqual(workflow["version"], 0.4)
+
+    def test_obsolete_media_chain_example_and_prompt_are_removed(self):
+        workflow_path = ROOT / "example_workflows" / "Qwen2.5 Omni H3 Video Caption.json"
+        prompt_path = ROOT / "prompts" / "video_caption_system.txt"
+
+        self.assertFalse(workflow_path.exists())
+        self.assertFalse(prompt_path.exists())
+
+    def test_official_omni_preset_example_uses_one_combined_generate_node(self):
+        workflow_path = ROOT / "example_workflows" / "Qwen2.5 Omni H3 Official Presets.json"
+        self.assertTrue(workflow_path.is_file())
+        workflow = json.loads(workflow_path.read_text("utf-8"))
+        node_types = {node["type"] for node in workflow["nodes"]}
+        loader = next(node for node in workflow["nodes"] if node["type"] == "LlamaServeDocLoader")
+
+        self.assertEqual(
+            node_types,
+            {
+                "LlamaServeDocLoader",
+                "LlamaServeDocH3OmniGenerate",
+                "LoadImage",
+                "VHS_LoadVideo",
+                "LoadAudio",
+                "PreviewAny",
+            },
+        )
+        self.assertNotIn("LlamaServeDocMedia", node_types)
+        self.assertNotIn("LlamaServeDocH3OmniPreset", node_types)
+        self.assertNotIn("LlamaServeDocGenerate", node_types)
+        self.assertEqual(len(loader["widgets_values"]), 7)
+        self.assertNotIn("port", loader.get("widgets_values_named", {}))
+        self.assertNotIn("port", {item["name"] for item in loader["inputs"]})
+        self.assertEqual(workflow["version"], 0.4)
+
+    def test_h3_reference_autocomplete_is_packaged_as_a_web_extension(self):
+        package_init = (ROOT / "__init__.py").read_text("utf-8")
+        extension = ROOT / "web" / "h3_reference_autocomplete.js"
+
+        self.assertIn('WEB_DIRECTORY = "./web"', package_init)
+        self.assertIn('"WEB_DIRECTORY"', package_init)
+        self.assertTrue(extension.is_file())
+        self.assertIn("app.registerExtension", extension.read_text("utf-8"))
 
 
 if __name__ == "__main__":
