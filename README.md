@@ -142,19 +142,6 @@ python -m unittest discover -s tests -v
 
 测试覆盖后端资产选择与 SHA-256 校验、安全解压、服务器复用与停止、流式响应解析、中断处理以及节点注册元数据。
 
-## 发布到 Comfy Registry
-
-仓库已包含官方 Registry 所需的 `pyproject.toml`、`.comfyignore` 和手动发布工作流 `.github/workflows/publish_action.yml`。
-
-首次注册前：
-
-1. 在 [Comfy Registry](https://registry.comfy.org/) 使用 Publisher ID `zhaoke1006`。Publisher ID 创建后不可更改。
-2. 为该 Publisher 创建 Registry API Key。
-3. 在 GitHub 仓库的 `Settings → Secrets and variables → Actions` 中新增仓库 Secret：`REGISTRY_ACCESS_TOKEN`。
-4. 打开 GitHub `Actions → Publish to Comfy Registry → Run workflow`，手动发布当前 `pyproject.toml` 中的版本。
-
-后续版本按语义化版本更新 `pyproject.toml` 中的 `version`，提交推送后再次手动运行发布工作流。Registry 中的项目 `name` 在首次发布后不可更改。
-
 ## 中断
 
 ComfyUI 的“中断当前任务”会在服务器启动等待和流式生成期间被检查。中断后若服务器被设置为常驻，将从中断时重新计算空闲超时；也可以直接使用 ComfyUI 自带的显存清理功能立即停止本节点创建的 llama-server。
