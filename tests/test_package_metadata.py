@@ -34,6 +34,18 @@ class PackageMetadataTests(unittest.TestCase):
 
         self.assertIn("tests/", patterns)
         self.assertIn(".github/", patterns)
+        self.assertIn("requirements-test.txt", patterns)
+
+    def test_ci_installs_lightweight_comfy_test_dependencies(self):
+        workflow = (ROOT / ".github" / "workflows" / "tests.yml").read_text("utf-8")
+        requirements_path = ROOT / "requirements-test.txt"
+
+        self.assertTrue(requirements_path.is_file())
+        requirements = requirements_path.read_text("utf-8").casefold()
+        self.assertIn("python -m pip install -r requirements-test.txt", workflow)
+        self.assertIn("numpy", requirements)
+        self.assertIn("pillow", requirements)
+        self.assertNotIn("torch", requirements)
 
     def test_official_registry_publish_workflow_is_manual_and_secret_backed(self):
         workflow = (ROOT / ".github" / "workflows" / "publish_action.yml").read_text("utf-8")

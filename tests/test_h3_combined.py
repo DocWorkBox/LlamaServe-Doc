@@ -5,7 +5,7 @@ import types
 import unittest
 from pathlib import Path
 
-import torch
+import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -200,9 +200,9 @@ class H3CombinedNodeTests(unittest.TestCase):
                     raw_timings={},
                 )
 
-        image = torch.zeros((1, 4, 6, 3), dtype=torch.float32)
-        video = torch.zeros((5, 4, 6, 3), dtype=torch.float32)
-        audio = {"waveform": torch.zeros((1, 1, 320)), "sample_rate": 32000}
+        image = np.zeros((1, 4, 6, 3), dtype=np.float32)
+        video = np.zeros((5, 4, 6, 3), dtype=np.float32)
+        audio = {"waveform": np.zeros((1, 1, 320), dtype=np.float32), "sample_rate": 32000}
         with tempfile.TemporaryDirectory() as directory:
             service = FakeService()
             _, _, group = generate_h3_omni(
@@ -251,7 +251,7 @@ class H3CombinedNodeTests(unittest.TestCase):
                     raw_timings={},
                 )
 
-        image = torch.zeros((1, 4, 6, 3), dtype=torch.float32)
+        image = np.zeros((1, 4, 6, 3), dtype=np.float32)
         invalid_but_unused_audio = object()
         with tempfile.TemporaryDirectory() as directory:
             _, _, group = generate_h3_omni(
@@ -278,8 +278,8 @@ class H3CombinedNodeTests(unittest.TestCase):
         self.assertEqual(group["ref_audios"], {})
 
     def test_materializer_writes_llama_cpp_media_and_cleans_temporary_files(self):
-        image = torch.zeros((1, 4, 6, 3), dtype=torch.float32)
-        audio = {"waveform": torch.zeros((1, 1, 320)), "sample_rate": 32000}
+        image = np.zeros((1, 4, 6, 3), dtype=np.float32)
+        audio = {"waveform": np.zeros((1, 1, 320), dtype=np.float32), "sample_rate": 32000}
         refs = collect_official_references(
             ref_images={"ref_image_0": image},
             ref_audios={"ref_audio_0": audio},
@@ -313,7 +313,7 @@ class H3CombinedNodeTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("ffmpeg"), "FFmpeg is required for reference videos")
     def test_materializer_encodes_image_batch_as_video(self):
-        frames = torch.zeros((5, 4, 6, 3), dtype=torch.float32)
+        frames = np.zeros((5, 4, 6, 3), dtype=np.float32)
         frames[:, :, :, 2] = 1.0
         refs = collect_official_references(ref_videos={"ref_video_0": frames})
         with tempfile.TemporaryDirectory() as directory:
