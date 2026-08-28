@@ -14,7 +14,7 @@ class PackageMetadataTests(unittest.TestCase):
         metadata = tomllib.loads((ROOT / "pyproject.toml").read_text("utf-8"))
 
         self.assertEqual(metadata["project"]["name"], "LlamaServe-Doc")
-        self.assertEqual(metadata["project"]["version"], "1.3.0")
+        self.assertEqual(metadata["project"]["version"], "1.4.0")
         self.assertEqual(metadata["project"]["license"], {"file": "LICENSE"})
         self.assertEqual(metadata["project"]["dependencies"], [])
         self.assertIn(
@@ -25,6 +25,8 @@ class PackageMetadataTests(unittest.TestCase):
             "Environment :: GPU :: NVIDIA CUDA",
             metadata["project"]["classifiers"],
         )
+        self.assertIn("Operating System :: POSIX :: Linux", metadata["project"]["classifiers"])
+        self.assertIn("Operating System :: MacOS", metadata["project"]["classifiers"])
         self.assertEqual(metadata["tool"]["comfy"]["DisplayName"], "LlamaServe-Doc")
         self.assertEqual(metadata["tool"]["comfy"]["PublisherId"], "zhaoke1006")
         self.assertNotIn("Icon", metadata["tool"]["comfy"])
@@ -46,6 +48,9 @@ class PackageMetadataTests(unittest.TestCase):
         self.assertIn("numpy", requirements)
         self.assertIn("pillow", requirements)
         self.assertNotIn("torch", requirements)
+        self.assertIn("windows-latest", workflow)
+        self.assertIn("ubuntu-latest", workflow)
+        self.assertIn("macos-14", workflow)
 
     def test_official_registry_publish_workflow_is_manual_and_secret_backed(self):
         workflow = (ROOT / ".github" / "workflows" / "publish_action.yml").read_text("utf-8")
@@ -91,7 +96,8 @@ class PackageMetadataTests(unittest.TestCase):
         self.assertNotIn("LlamaServeDocMedia", node_types)
         self.assertNotIn("LlamaServeDocH3OmniPreset", node_types)
         self.assertNotIn("LlamaServeDocGenerate", node_types)
-        self.assertEqual(len(loader["widgets_values"]), 7)
+        self.assertEqual(len(loader["widgets_values"]), 8)
+        self.assertEqual(loader["widgets_values"][-1], "auto")
         self.assertNotIn("port", loader.get("widgets_values_named", {}))
         self.assertNotIn("port", {item["name"] for item in loader["inputs"]})
         self.assertEqual(workflow["version"], 0.4)

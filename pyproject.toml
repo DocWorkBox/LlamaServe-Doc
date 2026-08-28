@@ -1,6 +1,6 @@
 [project]
 name = "LlamaServe-Doc"
-version = "1.3.0"
+version = "1.4.0"
 description = "Managed native llama-server nodes for ComfyUI"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -9,6 +9,8 @@ authors = [{ name = "DocWorkBox" }]
 dependencies = []
 classifiers = [
     "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
     "Environment :: GPU :: NVIDIA CUDA",
 ]
 

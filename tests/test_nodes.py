@@ -110,6 +110,27 @@ class NodeTests(unittest.TestCase):
         )[0]
         self.assertEqual(config.port, 0)
 
+    def test_loader_exposes_cross_platform_backend_with_auto_default(self):
+        required = LlamaServerLoader.INPUT_TYPES()["required"]
+
+        self.assertEqual(
+            required["backend"][0],
+            ["auto", "cuda", "vulkan", "metal", "cpu"],
+        )
+        self.assertEqual(required["backend"][1]["default"], "auto")
+
+        config = LlamaServerLoader().load(
+            "model.gguf",
+            "None",
+            4096,
+            47,
+            "on",
+            "q8_0",
+            "q8_0",
+            "vulkan",
+        )[0]
+        self.assertEqual(config.backend, "vulkan")
+
     def test_reasoning_off_disables_thinking_in_request(self):
         request = build_chat_request(
             system_prompt="system",

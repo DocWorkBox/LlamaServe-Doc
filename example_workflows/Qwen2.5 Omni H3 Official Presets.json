@@ -38,7 +38,8 @@
         -1,
         "on",
         "q8_0",
-        "q8_0"
+        "q8_0",
+        "auto"
       ],
       "widgets_values_named": {
         "model": "Qwen2.5-Omni-7B-H3-Prompt-Rewriter-Q4_K_M.gguf",
@@ -47,7 +48,8 @@
         "gpu_layers": -1,
         "flash_attention": "on",
         "cache_type_k": "q8_0",
-        "cache_type_v": "q8_0"
+        "cache_type_v": "q8_0",
+        "backend": "auto"
       }
     },
     {

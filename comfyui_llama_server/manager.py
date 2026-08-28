@@ -5,6 +5,7 @@ from dataclasses import replace
 from datetime import datetime
 import os
 from pathlib import Path
+import platform
 import socket
 import subprocess
 import threading
@@ -37,6 +38,23 @@ def _select_available_port(host: str) -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind((host, 0))
         return int(sock.getsockname()[1])
+
+
+def _prepend_environment_path(environment: dict[str, str], name: str, directory: str) -> None:
+    current = environment.get(name)
+    environment[name] = directory if not current else f"{directory}{os.pathsep}{current}"
+
+
+def _runtime_environment(executable: Path) -> dict[str, str]:
+    environment = os.environ.copy()
+    runtime_directory = str(executable.parent)
+    _prepend_environment_path(environment, "PATH", runtime_directory)
+    system = platform.system()
+    if system == "Linux":
+        _prepend_environment_path(environment, "LD_LIBRARY_PATH", runtime_directory)
+    elif system == "Darwin":
+        _prepend_environment_path(environment, "DYLD_LIBRARY_PATH", runtime_directory)
+    return environment
 
 
 class ServerManager:
@@ -95,7 +113,7 @@ class ServerManager:
 
         base_url = f"http://{config.host}:{config.port}"
 
-        executable = Path(self._executable_provider())
+        executable = Path(self._executable_provider(config.backend))
         self.log_dir.mkdir(parents=True, exist_ok=True)
         log_path = self.log_dir / f"llama-server-{datetime.now():%Y%m%d-%H%M%S}.log"
         self._log_handle = log_path.open("a", encoding="utf-8")
@@ -103,6 +121,7 @@ class ServerManager:
             "stdout": self._log_handle,
             "stderr": subprocess.STDOUT,
             "cwd": str(executable.parent),
+            "env": _runtime_environment(executable),
         }
         if os.name == "nt":
             kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW

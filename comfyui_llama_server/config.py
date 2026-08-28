@@ -16,6 +16,7 @@ class ServerConfig:
     host: str = "127.0.0.1"
     port: int = 0
     media_root: Path | None = None
+    backend: str = "auto"
 
     def build_command(self, executable: Path) -> list[str]:
         gpu_layers = "auto" if self.gpu_layers == -1 else str(self.gpu_layers)
@@ -62,4 +63,5 @@ class ServerConfig:
             self.host,
             self.port,
             self.media_root.resolve() if self.media_root else None,
+            self.backend,
         )

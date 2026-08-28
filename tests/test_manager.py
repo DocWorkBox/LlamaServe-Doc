@@ -1,6 +1,8 @@
+import os
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from dataclasses import replace
 from pathlib import Path
 
@@ -72,7 +74,7 @@ class ServerManagerTests(unittest.TestCase):
             return process
 
         self.manager = ServerManager(
-            executable_provider=lambda: Path("C:/runtime/llama-server.exe"),
+            executable_provider=lambda _backend: Path("C:/runtime/llama-server.exe"),
             process_factory=process_factory,
             health_check=lambda _url: True,
             port_available=lambda _host, _port: True,
@@ -141,7 +143,7 @@ class ServerManagerTests(unittest.TestCase):
             return timer
 
         manager = ServerManager(
-            executable_provider=lambda: Path("C:/runtime/llama-server.exe"),
+            executable_provider=lambda _backend: Path("C:/runtime/llama-server.exe"),
             process_factory=lambda command, **kwargs: FakeProcess(command, **kwargs),
             health_check=lambda _url: True,
             port_available=lambda _host, _port: True,
@@ -171,7 +173,7 @@ class ServerManagerTests(unittest.TestCase):
             return timer
 
         manager = ServerManager(
-            executable_provider=lambda: Path("C:/runtime/llama-server.exe"),
+            executable_provider=lambda _backend: Path("C:/runtime/llama-server.exe"),
             process_factory=lambda command, **kwargs: FakeProcess(command, **kwargs),
             health_check=lambda _url: True,
             port_available=lambda _host, _port: True,
@@ -188,6 +190,15 @@ class ServerManagerTests(unittest.TestCase):
         self.assertTrue(timers[0].cancelled)
         self.assertEqual(timers[1].interval, 600)
         manager.stop()
+
+    def test_launch_environment_includes_runtime_library_directory(self):
+        with patch("comfyui_llama_server.manager.platform.system", return_value="Linux"):
+            self.manager.ensure_started(config())
+
+        environment = self.processes[0].kwargs["env"]
+        expected = str(Path("C:/runtime"))
+        self.assertEqual(environment["LD_LIBRARY_PATH"].split(os.pathsep)[0], expected)
+        self.assertEqual(environment["PATH"].split(os.pathsep)[0], expected)
 
 
 if __name__ == "__main__":

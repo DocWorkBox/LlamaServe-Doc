@@ -22,7 +22,7 @@ git clone https://github.com/DocWorkBox/LlamaServe-Doc.git
 
 ## 节点
 
-- **LlamaServe-Doc Loader**：选择 `models/LLM` 中的主 GGUF 与 `mmproj`，设置上下文、GPU 层数、Flash Attention 和 KV Cache。llama-server 端口在运行时自动选择并复用，本地媒体白名单自动使用 ComfyUI 根目录，两者都不需要手工填写。
+- **LlamaServe-Doc Loader**：选择 `models/LLM` 中的主 GGUF 与 `mmproj`，设置上下文、GPU 层数、Flash Attention、KV Cache 和后端。`backend=auto` 会根据 Windows、Linux 或 macOS 自动选择运行时。llama-server 端口在运行时自动选择并复用，本地媒体白名单自动使用 ComfyUI 根目录，两者都不需要手工填写。
 - **LlamaServe-Doc H3 Omni Generate**：推荐的合并节点。内置 Lightx2v 五种模式预设、官方动态参考输入、llama-server 生成，并输出 Director `groups`。
 - **LlamaServe-Doc H3 Omni Preset**：旧版拆分式预设节点，为已有工作流继续保留。
 - **LlamaServe-Doc Generate**：发送 llama.cpp OpenAI 兼容的流式请求，输出文本和性能 JSON。
@@ -128,19 +128,41 @@ ffprobe -version
 
 如果命令不存在，请安装 FFmpeg 并把其 `bin` 目录加入系统 `PATH`，然后重启 ComfyUI。图片和独立 WAV/FLAC/MP3 输入不依赖视频解码，但视频文件必须使用带视频支持的 llama.cpp 后端及 FFmpeg。
 
-## 后端下载
+## 跨平台后端
 
-第一次执行 Loader + Generate 时，节点从 `ggml-org/llama.cpp` 的 GitHub 最新发行版下载 Windows CUDA 12 后端和 CUDA runtime。每个压缩包都使用 GitHub Release API 返回的 SHA-256 摘要校验后才会安装到本插件的 `runtime/`。后续执行直接复用，不会重复下载。
+`backend=auto` 的选择规则：
+
+| 系统 | 自动后端 |
+| --- | --- |
+| Windows x64 | CUDA 12 |
+| Windows ARM64 | CPU |
+| Linux x64 / ARM64 | 检测到 CUDA 编译工具链时自动编译 CUDA；否则检测到 `vulkaninfo` 时使用 Vulkan，再否则 CPU |
+| macOS Apple Silicon | Metal |
+| macOS Intel | CPU |
+
+也可以在 Loader 中手工选择 `cuda`、`vulkan`、`metal` 或 `cpu`。不适用于当前系统的组合会直接给出明确错误，不会下载错误架构的文件。
+
+第一次执行 Loader + Generate 时，节点扫描 `ggml-org/llama.cpp` 最近的 GitHub 发行版。Windows、Linux Vulkan/CPU 和 macOS 会选择第一个包含完整目标平台资产的版本；Windows 使用 ZIP，Linux 和 macOS 使用 TAR.GZ，压缩包均使用 GitHub Release API 返回的 SHA-256 摘要校验后才会安装到本插件的 `runtime/`。Linux CUDA 因官方没有提供预编译压缩包，会从同一官方仓库检出最近的 nightly 标签，在本机编译并缓存。后续执行直接复用，不会重复下载或编译。Windows 旧版本已经下载到 `runtime/cuda12` 的后端仍会继续复用。
+
+如果用户已经安装了 `llama-server`，节点会优先使用 `PATH` 中的版本。也可以通过环境变量指定完整路径：
+
+```text
+LLAMASERVE_DOC_SERVER=/absolute/path/to/llama-server
+```
+
+Linux 自动选择 CUDA 需要系统存在完整编译工具链：CUDA Toolkit 的 `nvcc`、CMake、Git，以及可用的 C/C++ 编译器。节点会依次从 `PATH`、`CUDA_HOME` / `CUDA_PATH`、`/usr/local/cuda` 和 `/opt/cuda` 查找 `nvcc`。ComfyUI 或 PyTorch 能调用 NVIDIA 显卡，只能证明 CUDA 运行库可用，并不代表系统一定安装了 `nvcc`；常见的 ComfyUI 环境确实只有运行库。没有完整工具链时，`backend=auto` 会安全回退到 Vulkan 或 CPU，不会让 ComfyUI 安装失败。手工选择 `cuda` 时若缺少工具链会给出明确错误。
+
+已经自行安装 CUDA 版 `llama-server` 的用户无需重新编译：节点优先使用 `PATH` 中的版本，或使用上述 `LLAMASERVE_DOC_SERVER` 指向它。
 
 后端日志位于 `logs/`。节点运行时会自动选择可用的本机端口，并且只会停止由当前节点创建的 llama-server，不会接管或终止外部进程。
 
 ## 开发验证
 
-```powershell
+```text
 python -m unittest discover -s tests -v
 ```
 
-测试覆盖后端资产选择与 SHA-256 校验、安全解压、服务器复用与停止、流式响应解析、中断处理以及节点注册元数据。
+测试在 Windows、Ubuntu 和 macOS 的 GitHub Actions 矩阵运行，覆盖平台与后端选择、ZIP/TAR 安全解压、SHA-256 校验、服务器复用与停止、流式响应解析、中断处理以及节点注册元数据。
 
 ## 中断
 

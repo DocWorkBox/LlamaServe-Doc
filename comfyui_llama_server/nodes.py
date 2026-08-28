@@ -48,7 +48,7 @@ _register_llm_folder()
 
 _installer = BackendInstaller(RUNTIME_ROOT)
 _manager = ServerManager(
-    executable_provider=lambda: _installer.ensure_installed("cuda12"),
+    executable_provider=lambda backend: _installer.ensure_installed(backend),
     log_dir=PLUGIN_ROOT / "logs",
 )
 _service = GenerationService(_manager, LlamaServerClient())
@@ -441,6 +441,7 @@ class LlamaServerLoader:
                 "flash_attention": (["on", "auto", "off"], {"default": "on"}),
                 "cache_type_k": (["q8_0", "f16", "q4_0"], {"default": "q8_0"}),
                 "cache_type_v": (["q8_0", "f16", "q4_0"], {"default": "q8_0"}),
+                "backend": (["auto", "cuda", "vulkan", "metal", "cpu"], {"default": "auto"}),
             },
         }
 
@@ -459,6 +460,7 @@ class LlamaServerLoader:
         flash_attention,
         cache_type_k,
         cache_type_v,
+        backend="auto",
     ):
         model_path = folder_paths.get_full_path("LLM", model)
         if not model_path:
@@ -482,6 +484,7 @@ class LlamaServerLoader:
                 cache_type_v=cache_type_v,
                 port=0,
                 media_root=resolved_media_root,
+                backend=backend,
             ),
         )
 
