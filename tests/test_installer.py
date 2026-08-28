@@ -62,6 +62,7 @@ class BackendInstallerTests(unittest.TestCase):
             reused = installer.ensure_installed("cuda12")
 
             self.assertEqual(executable, reused)
+            self.assertEqual(executable, executable.resolve())
             self.assertTrue(executable.is_file())
             self.assertTrue((executable.parent / "cudart64_12.dll").is_file())
             self.assertEqual(len(downloads), 2)
@@ -169,6 +170,7 @@ class BackendInstallerTests(unittest.TestCase):
             reused = installer.ensure_installed("auto")
 
             self.assertEqual(executable, reused)
+            self.assertEqual(executable, executable.resolve())
             self.assertEqual(executable.read_bytes(), b"cuda server")
             self.assertTrue((executable.parent / "libggml-cuda.so").is_file())
             self.assertEqual(len(commands), 3)

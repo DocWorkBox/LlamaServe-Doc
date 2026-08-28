@@ -192,11 +192,13 @@ class ServerManagerTests(unittest.TestCase):
         manager.stop()
 
     def test_launch_environment_includes_runtime_library_directory(self):
+        runtime_directory = Path(self.temp_dir.name).resolve() / "runtime"
+        self.manager._executable_provider = lambda _backend: runtime_directory / "llama-server"
         with patch("comfyui_llama_server.manager.platform.system", return_value="Linux"):
             self.manager.ensure_started(config())
 
         environment = self.processes[0].kwargs["env"]
-        expected = str(Path("C:/runtime"))
+        expected = str(runtime_directory)
         self.assertEqual(environment["LD_LIBRARY_PATH"].split(os.pathsep)[0], expected)
         self.assertEqual(environment["PATH"].split(os.pathsep)[0], expected)
 

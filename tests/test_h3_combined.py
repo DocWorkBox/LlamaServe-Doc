@@ -285,7 +285,7 @@ class H3CombinedNodeTests(unittest.TestCase):
             ref_audios={"ref_audio_0": audio},
         )
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             with materialize_reference_media(refs, root) as media:
                 paths = [Path(item["path"]) for item in media]
                 self.assertEqual([item["type"] for item in media], ["image", "audio"])

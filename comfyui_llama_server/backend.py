@@ -510,7 +510,7 @@ class BackendInstaller:
             encoding="utf-8",
         )
         os.replace(pointer_staging, backend_root / "current.json")
-        return destination / target.executable_name
+        return (destination / target.executable_name).resolve()
 
     def _build_cuda_backend(
         self,
