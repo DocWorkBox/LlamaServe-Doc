@@ -14,7 +14,7 @@ class PackageMetadataTests(unittest.TestCase):
         metadata = tomllib.loads((ROOT / "pyproject.toml").read_text("utf-8"))
 
         self.assertEqual(metadata["project"]["name"], "LlamaServe-Doc")
-        self.assertEqual(metadata["project"]["version"], "1.4.1")
+        self.assertEqual(metadata["project"]["version"], "1.4.2")
         self.assertEqual(metadata["project"]["license"], {"file": "LICENSE"})
         self.assertEqual(metadata["project"]["dependencies"], [])
         self.assertIn(

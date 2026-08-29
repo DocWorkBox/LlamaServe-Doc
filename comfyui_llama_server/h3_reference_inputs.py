@@ -282,7 +282,7 @@ def materialize_reference_media(references: OfficialReferences, media_root: Path
     root = Path(media_root).expanduser().resolve()
     if not root.is_dir():
         raise NotADirectoryError(f"media_root is not a directory: {root}")
-    parent = root / "temp" / "llamaserve_doc"
+    parent = root / "llamaserve_doc"
     parent.mkdir(parents=True, exist_ok=True)
     request_dir = Path(tempfile.mkdtemp(prefix="h3-omni-", dir=parent))
     try:

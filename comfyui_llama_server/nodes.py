@@ -72,8 +72,33 @@ def _is_mmproj(name: str) -> bool:
 
 
 def _default_media_root() -> Path:
+    candidates = []
+    for getter_name in ("get_temp_directory", "get_input_directory"):
+        getter = getattr(folder_paths, getter_name, None)
+        if callable(getter):
+            candidates.append((getter_name, getter))
+
     base_path = getattr(folder_paths, "base_path", None)
-    return Path(base_path or Path(folder_paths.models_dir).parent).resolve()
+    candidates.append(
+        (
+            "ComfyUI base directory",
+            lambda: base_path or Path(folder_paths.models_dir).parent,
+        )
+    )
+
+    failures = []
+    for label, getter in candidates:
+        try:
+            root = Path(getter()).expanduser().resolve()
+            (root / "llamaserve_doc").mkdir(parents=True, exist_ok=True)
+            return root
+        except (OSError, TypeError, ValueError) as error:
+            failures.append(f"{label}: {error}")
+
+    raise NotADirectoryError(
+        "No writable ComfyUI temp or input directory is available for llama-server media: "
+        + "; ".join(failures)
+    )
 
 
 def build_chat_request(
@@ -472,7 +497,7 @@ class LlamaServerLoader:
                 raise FileNotFoundError(f"mmproj not found: {mmproj}")
         resolved_media_root = _default_media_root()
         if not resolved_media_root.is_dir():
-            raise NotADirectoryError(f"ComfyUI root is not a directory: {resolved_media_root}")
+            raise NotADirectoryError(f"ComfyUI media directory is not a directory: {resolved_media_root}")
         return (
             ServerConfig(
                 model_path=Path(model_path),

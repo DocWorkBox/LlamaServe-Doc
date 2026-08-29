@@ -4,6 +4,7 @@ import tempfile
 import types
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -77,19 +78,53 @@ class NodeTests(unittest.TestCase):
         self.assertNotIn("media_root", inputs.get("optional", {}))
         self.assertNotIn("media_root", parameters)
 
-        config = LlamaServerLoader().load(
-            "model.gguf",
-            "None",
-            4096,
-            47,
-            "on",
-            "q8_0",
-            "q8_0",
-        )[0]
-        self.assertEqual(
-            config.media_root,
-            Path(folder_paths.base_path).resolve(),
-        )
+        with tempfile.TemporaryDirectory() as directory:
+            personal_temp = Path(directory) / "personal" / "temp"
+            personal_temp.mkdir(parents=True)
+            with patch.object(
+                folder_paths,
+                "get_temp_directory",
+                return_value=str(personal_temp),
+                create=True,
+            ):
+                config = LlamaServerLoader().load(
+                    "model.gguf",
+                    "None",
+                    4096,
+                    47,
+                    "on",
+                    "q8_0",
+                    "q8_0",
+                )[0]
+
+            self.assertEqual(config.media_root, personal_temp.resolve())
+
+    def test_loader_falls_back_to_comfy_input_when_temp_directory_is_unavailable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            personal_input = Path(directory) / "personal" / "input"
+            personal_input.mkdir(parents=True)
+            with patch.object(
+                folder_paths,
+                "get_temp_directory",
+                side_effect=OSError("temp is read-only"),
+                create=True,
+            ), patch.object(
+                folder_paths,
+                "get_input_directory",
+                return_value=str(personal_input),
+                create=True,
+            ):
+                config = LlamaServerLoader().load(
+                    "model.gguf",
+                    "None",
+                    4096,
+                    47,
+                    "on",
+                    "q8_0",
+                    "q8_0",
+                )[0]
+
+            self.assertEqual(config.media_root, personal_input.resolve())
 
     def test_loader_hides_and_automatically_configures_server_port(self):
         inputs = LlamaServerLoader.INPUT_TYPES()

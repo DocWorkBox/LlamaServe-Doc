@@ -292,6 +292,7 @@ class H3CombinedNodeTests(unittest.TestCase):
                 self.assertTrue(all(path.is_file() for path in paths))
                 temp_parent = paths[0].parent
                 self.assertTrue(temp_parent.is_relative_to(root))
+                self.assertEqual(temp_parent.parent, root / "llamaserve_doc")
             self.assertFalse(temp_parent.exists())
 
     def test_reference_video_plan_matches_qwen_omni_sampling_and_pixel_budget(self):

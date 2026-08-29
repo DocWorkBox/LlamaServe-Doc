@@ -1,6 +1,6 @@
 [project]
 name = "LlamaServe-Doc"
-version = "1.4.1"
+version = "1.4.2"
 description = "Managed native llama-server nodes for ComfyUI"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }

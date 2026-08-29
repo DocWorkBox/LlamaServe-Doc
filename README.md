@@ -22,7 +22,7 @@ git clone https://github.com/DocWorkBox/LlamaServe-Doc.git
 
 ## 节点
 
-- **LlamaServe-Doc Loader**：选择 `models/LLM` 中的主 GGUF 与 `mmproj`，设置上下文、GPU 层数、Flash Attention、KV Cache 和后端。`backend=auto` 会根据 Windows、Linux 或 macOS 自动选择运行时。llama-server 端口在运行时自动选择并复用，本地媒体白名单自动使用 ComfyUI 根目录，两者都不需要手工填写。
+- **LlamaServe-Doc Loader**：选择 `models/LLM` 中的主 GGUF 与 `mmproj`，设置上下文、GPU 层数、Flash Attention、KV Cache 和后端。`backend=auto` 会根据 Windows、Linux 或 macOS 自动选择运行时。llama-server 端口在运行时自动选择并复用，本地媒体白名单自动使用 ComfyUI 临时目录，两者都不需要手工填写。
 - **LlamaServe-Doc H3 Omni Generate**：推荐的合并节点。内置 Lightx2v 五种模式预设、官方动态参考输入、llama-server 生成，并输出 Director `groups`。
 - **LlamaServe-Doc H3 Omni Preset**：旧版拆分式预设节点，为已有工作流继续保留。
 - **LlamaServe-Doc Generate**：发送 llama.cpp OpenAI 兼容的流式请求，输出文本和性能 JSON。
@@ -113,7 +113,7 @@ Ref2AV LoRA 最多接受 9 张图片、3 个视频、3 个音频、合计 12 个
 
 Base 模式输出三个字段：`integrated_multimodal_description`、`overall_soundscape`、`non_diegetic_music`。Ref2AV 输出六个区段：`subject_definitions`、`summary`、`retention_analysis`、`detailed_description`、`overall_soundscape`、`non_diegetic_music`。
 
-Loader 内部仍会把 ComfyUI 根目录作为 llama-server 的 `--media-path`。这是 llama-server 读取本地 `file://` 图片、视频和音频时必须使用的安全白名单，不是模型参数，也无需用户调整。合并节点会把 ComfyUI 的 IMAGE/AUDIO 输入临时保存到该目录下，再以相对路径发送给后端；因此 Loader 界面不再显示 `media_root`。
+Loader 内部使用 ComfyUI 官方 `get_temp_directory()` 返回的当前用户临时目录作为 llama-server 的 `--media-path`；如果该目录不可用或不可写，才回退到 `get_input_directory()`。这是 llama-server 读取本地 `file://` 图片、视频和音频时必须使用的安全白名单，不是模型参数，也无需用户查找或填写缓存路径。合并节点会把 IMAGE/AUDIO 引用临时保存到该白名单内，请求结束后立即删除；因此不会长期污染 `input`，也能适配 RunningHub 这类程序目录与个人数据目录分离的环境。
 
 若安装了 `comfyui_lg_hotreload`，请在其热加载配置中把 `ComfyUI-LlamaServer` 加入排除列表。旧版 HotReload 会把 ComfyUI V3 的 Combo 类型字符串 `COMBO` 错当成选项数组，导致下拉菜单在热更新后显示为 `C / O / M / B / O`。这属于 HotReload 的 V3 兼容问题，正常重启 ComfyUI 加载本节点不受影响。
 
