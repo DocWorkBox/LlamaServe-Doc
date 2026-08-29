@@ -1,4 +1,5 @@
 import { app } from "../../scripts/app.js";
+import { api } from "../../scripts/api.js";
 import {
     collectReferenceMentions,
     findMentionQuery,
@@ -8,6 +9,22 @@ import {
 
 const NODE_CLASS = "LlamaServeDocH3OmniGenerate";
 const CONTROLLER_KEY = "__llamaServeDocReferenceAutocomplete";
+
+
+function inputViewUrl(filename) {
+    const normalized = String(filename || "").replace(/\\/g, "/");
+    const slash = normalized.lastIndexOf("/");
+    const subfolder = slash >= 0 ? normalized.slice(0, slash) : "";
+    const base = slash >= 0 ? normalized.slice(slash + 1) : normalized;
+    const parameters = new URLSearchParams({ filename: base, type: "input" });
+    if (subfolder) parameters.set("subfolder", subfolder);
+    return api.apiURL(`/view?${parameters.toString()}`);
+}
+
+
+function referenceMentions(node) {
+    return collectReferenceMentions(node.inputs, node.graph, inputViewUrl);
+}
 
 
 function textareaFor(widget) {
@@ -120,7 +137,8 @@ function attachAutocomplete(node, attempt = 0) {
             return;
         }
 
-        visibleItems = collectReferenceMentions(node.inputs).filter((item) =>
+        const connectedItems = referenceMentions(node);
+        visibleItems = connectedItems.filter((item) =>
             matchesQuery(item, mention.query),
         );
         selectedIndex = Math.min(selectedIndex, Math.max(0, visibleItems.length - 1));
@@ -128,7 +146,7 @@ function attachAutocomplete(node, attempt = 0) {
 
         if (!visibleItems.length) {
             const message = document.createElement("div");
-            message.textContent = collectReferenceMentions(node.inputs).length
+            message.textContent = connectedItems.length
                 ? "没有匹配的已连接媒体"
                 : "请先连接图片、视频或音频参考";
             Object.assign(message.style, { padding: "8px 10px", opacity: "0.75" });
@@ -140,7 +158,8 @@ function attachAutocomplete(node, attempt = 0) {
                 button.setAttribute("role", "option");
                 Object.assign(button.style, {
                     display: "grid",
-                    gridTemplateColumns: "110px 1fr",
+                    gridTemplateColumns: "40px 110px 1fr",
+                    alignItems: "center",
                     gap: "10px",
                     width: "100%",
                     padding: "7px 9px",
@@ -150,12 +169,38 @@ function attachAutocomplete(node, attempt = 0) {
                     textAlign: "left",
                     cursor: "pointer",
                 });
+                let thumbnail;
+                if (item.thumbnail) {
+                    thumbnail = document.createElement("img");
+                    thumbnail.src = item.thumbnail;
+                    thumbnail.alt = "";
+                    Object.assign(thumbnail.style, {
+                        width: "40px",
+                        height: "40px",
+                        objectFit: "cover",
+                        borderRadius: "5px",
+                        background: "#111",
+                    });
+                } else {
+                    thumbnail = document.createElement("span");
+                    thumbnail.textContent = item.kind === "video" ? "▶" : item.kind === "audio" ? "♪" : "▣";
+                    Object.assign(thumbnail.style, {
+                        display: "grid",
+                        placeItems: "center",
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "5px",
+                        background: "var(--comfy-input-bg, #181818)",
+                        fontSize: "18px",
+                        opacity: "0.8",
+                    });
+                }
                 const label = document.createElement("strong");
                 label.textContent = item.label;
                 const detail = document.createElement("span");
                 detail.textContent = `${item.source} · ${item.description}`;
                 detail.style.opacity = "0.72";
-                button.append(label, detail);
+                button.append(thumbnail, label, detail);
                 button.addEventListener("mouseenter", () => {
                     selectedIndex = index;
                     updateSelection();

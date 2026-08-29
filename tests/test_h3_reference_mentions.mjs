@@ -60,6 +60,42 @@ test("does not offer a paired soundtrack without its matching video", () => {
 });
 
 
+test("recognizes connected references when the frontend exposes qualified labels", () => {
+    const mentions = collectReferenceMentions([
+        {
+            name: "ref_images.ref_image_0",
+            label: "ref_images.ref_image_0",
+            link: 7,
+        },
+    ]);
+
+    assert.deepEqual(
+        mentions.map(({ source, label }) => ({ source, label })),
+        [{ source: "ref_image_0", label: "<Picture 1>" }],
+    );
+});
+
+
+test("uses the connected source node preview in the mention menu", () => {
+    const graph = {
+        links: new Map([[7, { origin_id: 42 }]]),
+        getNodeById(id) {
+            assert.equal(id, 42);
+            return { imgs: [{ src: "/view?filename=reference.png&type=input" }] };
+        },
+    };
+    const mentions = collectReferenceMentions([
+        {
+            name: "ref_images.ref_image_0",
+            label: "ref_images.ref_image_0",
+            link: 7,
+        },
+    ], graph);
+
+    assert.equal(mentions[0].thumbnail, "/view?filename=reference.png&type=input");
+});
+
+
 test("finds the active @ query and replaces it with the selected official label", () => {
     const value = "将 @视频 替换为主参考";
     const caret = value.indexOf(" ", 2);
