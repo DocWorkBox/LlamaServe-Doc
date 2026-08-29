@@ -11,11 +11,6 @@ function connectedLinkId(input) {
 }
 
 
-function isConnected(input) {
-    return connectedLinkId(input) !== null;
-}
-
-
 function sourceName(input) {
     for (const value of [input?.label, input?.name]) {
         const candidate = String(value || "").split(".").at(-1);
@@ -36,21 +31,33 @@ function graphLink(graph, linkId) {
 }
 
 
-function sourceThumbnail(input, graph, inputViewUrl) {
+function sourceNode(input, graph) {
     const link = graphLink(graph, connectedLinkId(input));
-    const sourceNode = link
+    return link
         ? (graph?.getNodeById?.(link.origin_id) || graph?._nodes_by_id?.[link.origin_id])
         : null;
-    if (!sourceNode) return "";
+}
 
-    const imageIndex = sourceNode.imageIndex ?? sourceNode.overIndex ?? 0;
-    const image = sourceNode.imgs?.[imageIndex] || sourceNode.imgs?.[0];
+
+function isConnected(input, graph) {
+    if (connectedLinkId(input) === null) return false;
+    const origin = sourceNode(input, graph);
+    return !origin || (origin.mode !== 2 && origin.mode !== 4);
+}
+
+
+function sourceThumbnail(input, graph, inputViewUrl) {
+    const origin = sourceNode(input, graph);
+    if (!origin) return "";
+
+    const imageIndex = origin.imageIndex ?? origin.overIndex ?? 0;
+    const image = origin.imgs?.[imageIndex] || origin.imgs?.[0];
     if (image?.src) return String(image.src);
 
-    const videoPreview = sourceNode.widgets?.find((widget) => widget.name === "videopreview");
+    const videoPreview = origin.widgets?.find((widget) => widget.name === "videopreview");
     if (videoPreview?.videoEl?.poster) return String(videoPreview.videoEl.poster);
 
-    const imageWidget = sourceNode.widgets?.find((widget) => widget.name === "image");
+    const imageWidget = origin.widgets?.find((widget) => widget.name === "image");
     if (imageWidget?.value && typeof inputViewUrl === "function") {
         return inputViewUrl(String(imageWidget.value));
     }
@@ -61,7 +68,7 @@ function sourceThumbnail(input, graph, inputViewUrl) {
 function connectedIndexMap(inputs, prefix, graph, inputViewUrl) {
     return new Map(
         (inputs || [])
-            .filter(isConnected)
+            .filter((input) => isConnected(input, graph))
             .map((input) => [input, sourceName(input)])
             .map(([input, name]) => [input, name, name?.match(SLOT_PATTERN)])
             .filter(([, , match]) => match?.[1] === prefix)

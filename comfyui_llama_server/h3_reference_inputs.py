@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -257,7 +258,7 @@ def _save_video(value, path: Path, work_dir: Path) -> None:
 
 
 def _save_audio(value, path: Path) -> None:
-    if not isinstance(value, dict) or value.get("waveform") is None:
+    if not isinstance(value, Mapping) or value.get("waveform") is None:
         raise ValueError("Expected AUDIO with waveform and sample_rate")
     waveform = value["waveform"]
     waveform = waveform.detach().cpu() if hasattr(waveform, "detach") else waveform

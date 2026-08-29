@@ -3,6 +3,8 @@ import sys
 import tempfile
 import types
 import unittest
+import wave
+from collections.abc import Mapping
 from pathlib import Path
 
 import numpy as np
@@ -294,6 +296,40 @@ class H3CombinedNodeTests(unittest.TestCase):
                 self.assertTrue(temp_parent.is_relative_to(root))
                 self.assertEqual(temp_parent.parent, root / "llamaserve_doc")
             self.assertFalse(temp_parent.exists())
+
+    def test_materializer_accepts_vhs_lazy_audio_mapping(self):
+        class LazyAudioMap(Mapping):
+            def __init__(self):
+                self._values = None
+
+            def _load(self):
+                if self._values is None:
+                    self._values = {
+                        "waveform": np.zeros((1, 2, 320), dtype=np.float32),
+                        "sample_rate": 48000,
+                    }
+                return self._values
+
+            def __getitem__(self, key):
+                return self._load()[key]
+
+            def __iter__(self):
+                return iter(self._load())
+
+            def __len__(self):
+                return len(self._load())
+
+        refs = collect_official_references(
+            ref_audios={"ref_audio_0": LazyAudioMap()},
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            with materialize_reference_media(refs, Path(directory)) as media:
+                audio_path = Path(media[0]["path"])
+                self.assertEqual(media[0]["source"], "ref_audio_0")
+                with wave.open(str(audio_path), "rb") as audio_file:
+                    self.assertEqual(audio_file.getnchannels(), 2)
+                    self.assertEqual(audio_file.getframerate(), 48000)
 
     def test_reference_video_plan_matches_qwen_omni_sampling_and_pixel_budget(self):
         self.assertTrue(hasattr(h3_reference_inputs, "plan_reference_video"))

@@ -1,15 +1,49 @@
 {
   "id": "74f37f8e-5290-4d90-bbdf-h3-omni-combined",
   "revision": 0,
-  "last_node_id": 7,
-  "last_link_id": 7,
+  "last_node_id": 9,
+  "last_link_id": 9,
   "nodes": [
+    {
+      "id": 5,
+      "type": "PreviewAny",
+      "pos": [
+        1205.5882352941178,
+        81.76474178538604
+      ],
+      "size": [
+        513.5294117647059,
+        754.9412123736213
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "widgets_values_named": {}
+    },
     {
       "id": 1,
       "type": "LlamaServeDocLoader",
       "pos": [
-        80,
-        80
+        71.57352846226303,
+        36.57103839405088
       ],
       "size": [
         360,
@@ -53,52 +87,96 @@
       }
     },
     {
-      "id": 5,
-      "type": "PreviewAny",
+      "id": 7,
+      "type": "LoadAudio",
       "pos": [
-        1205.5882352941178,
-        81.76474178538604
+        -228.33327349494448,
+        145.29411764705884
       ],
       "size": [
-        513.5294117647059,
-        754.9412123736213
+        270,
+        136
       ],
       "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "source",
-          "type": "*",
-          "link": 5
-        }
-      ],
+      "order": 1,
+      "mode": 4,
+      "inputs": [],
       "outputs": [
         {
-          "name": "STRING",
-          "type": "STRING",
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "output_from_mic_effect_studio_voice_48k_mono_2026-08-23_17-38-26.wav",
+        null,
+        null
+      ],
+      "widgets_values_named": {
+        "audio": "output_from_mic_effect_studio_voice_48k_mono_2026-08-23_17-38-26.wav",
+        "upload": null
+      }
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [
+        -580.3921329273896,
+        136.4705882352941
+      ],
+      "size": [
+        330,
+        314
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            2
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
           "links": null
         }
       ],
       "properties": {
-        "Node name for S&R": "PreviewAny"
+        "Node name for S&R": "LoadImage"
       },
-      "widgets_values": [],
-      "widgets_values_named": {}
+      "widgets_values": [
+        "Krea2_turbo_00053_.png",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "Krea2_turbo_00053_.png",
+        "upload": "image"
+      }
     },
     {
       "id": 4,
       "type": "VHS_LoadVideo",
       "pos": [
-        -863.3757216509645,
-        132.74511000689347
+        -983.6862009807867,
+        125.63027933263791
       ],
       "size": [
         261.6533203125,
         452.8151996707128
       ],
       "flags": {},
-      "order": 1,
+      "order": 3,
       "mode": 0,
       "inputs": [
         {
@@ -152,7 +230,6 @@
         "skip_first_frames": 0,
         "select_every_nth": 1,
         "format": "AnimateDiff",
-        "choose video to upload": "image",
         "videopreview": {
           "hidden": false,
           "paused": false,
@@ -178,7 +255,7 @@
         "skip_first_frames": 0,
         "select_every_nth": 1,
         "format": "AnimateDiff",
-        "choose video to upload": "image",
+        "choose video to upload": null,
         "videopreview": {
           "hidden": false,
           "paused": false,
@@ -197,56 +274,15 @@
       }
     },
     {
-      "id": 2,
-      "type": "LoadImage",
-      "pos": [
-        -580.3921329273896,
-        136.4705882352941
-      ],
-      "size": [
-        330,
-        314
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            2
-          ]
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadImage"
-      },
-      "widgets_values": [
-        "Krea2_turbo_00053_.png",
-        "image"
-      ],
-      "widgets_values_named": {
-        "image": "Krea2_turbo_00053_.png",
-        "upload": "image"
-      }
-    },
-    {
       "id": 3,
       "type": "LlamaServeDocH3OmniGenerate",
       "pos": [
-        520,
-        80
+        502.3809708982908,
+        84.00703205276054
       ],
       "size": [
         650,
-        560
+        604
       ],
       "flags": {},
       "order": 4,
@@ -338,7 +374,7 @@
       },
       "widgets_values": [
         "Ref2AV",
-        "<Video 1> 的人物替换为<Picture 1> 的人物",
+        "把<Video 1> 中的人物替换为<Picture 1> 中的人物，保持<Audio 1> 不变",
         8,
         "16:9",
         2048,
@@ -350,11 +386,12 @@
         0,
         "fixed",
         "off",
-        true
+        false,
+        5
       ],
       "widgets_values_named": {
         "mode": "Ref2AV",
-        "raw_prompt": "<Video 1> 的人物替换为<Picture 1> 的人物",
+        "raw_prompt": "把<Video 1> 中的人物替换为<Picture 1> 中的人物，保持<Audio 1> 不变",
         "duration": 8,
         "resolution": "16:9",
         "max_tokens": 2048,
@@ -366,44 +403,8 @@
         "seed": 0,
         "control_after_generate": "fixed",
         "reasoning": "off",
-        "stop_server_after_generate": true
-      }
-    },
-    {
-      "id": 7,
-      "type": "LoadAudio",
-      "pos": [
-        -228.33327349494448,
-        145.29411764705884
-      ],
-      "size": [
-        270,
-        136
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "AUDIO",
-          "type": "AUDIO",
-          "links": [
-            7
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadAudio"
-      },
-      "widgets_values": [
-        "01_single_urban_woman_dance_22s.mp4",
-        null,
-        ""
-      ],
-      "widgets_values_named": {
-        "audio": "01_single_urban_woman_dance_22s.mp4",
-        "upload": ""
+        "stop_server_after_generate": false,
+        "idle_timeout_minutes": 5
       }
     }
   ],
@@ -461,10 +462,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7727272727272729,
+      "scale": 0.7727272727272746,
       "offset": [
-        948.2647132253041,
-        376.0141469882225
+        651.2681280276827,
+        505.4858743516767
       ]
     },
     "frontendVersion": "1.49.6",

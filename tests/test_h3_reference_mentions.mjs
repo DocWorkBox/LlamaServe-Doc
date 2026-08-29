@@ -60,6 +60,30 @@ test("does not offer a paired soundtrack without its matching video", () => {
 });
 
 
+test("ignores bypassed source nodes when assigning reference numbers", () => {
+    const graph = {
+        links: new Map([
+            [3, { origin_id: 4 }],
+            [4, { origin_id: 4 }],
+            [7, { origin_id: 7 }],
+        ]),
+        getNodeById(id) {
+            return { mode: id === 4 ? 4 : 0 };
+        },
+    };
+    const mentions = collectReferenceMentions([
+        { ...input("ref_video_0"), link: 3 },
+        { ...input("ref_video_audio_0"), link: 4 },
+        { ...input("ref_audio_0"), link: 7 },
+    ], graph);
+
+    assert.deepEqual(
+        mentions.map(({ source, label }) => ({ source, label })),
+        [{ source: "ref_audio_0", label: "<Audio 1>" }],
+    );
+});
+
+
 test("recognizes connected references when the frontend exposes qualified labels", () => {
     const mentions = collectReferenceMentions([
         {
